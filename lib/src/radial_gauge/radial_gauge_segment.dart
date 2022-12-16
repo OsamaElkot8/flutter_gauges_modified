@@ -1,8 +1,8 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:private_lecture/ui/screens/test/gauge/src/radial_gauge/radial_ticks.dart';
-
+import 'package:gauges/src/radial_gauge/radial_ticks.dart';
 import 'radial_gauge_axis.dart';
 
 /// A segment of a radial gauge axis.
