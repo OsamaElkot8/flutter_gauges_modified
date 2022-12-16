@@ -1,8 +1,8 @@
 import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gauges/src/radial_gauge/radial_ticks.dart';
+import 'package:private_lecture/ui/screens/test/gauge/src/radial_gauge/radial_ticks.dart';
+
 import 'radial_gauge_axis.dart';
 
 /// A segment of a radial gauge axis.
@@ -70,6 +70,11 @@ class RadialGaugeSegment {
   /// If non-null, the corners of the segment are rounded by this [BorderRadius].
   final BorderRadiusGeometry? borderRadius;
 
+  final double topLeftCornerRadius;
+  final double topRightCornerRadius;
+  final double bottomRightCornerRadius;
+  final double bottomLeftCornerRadius;
+
   ///The blend mode applied to the [color] or [gradient] background of the segment.
   ///
   /// If no [backgroundBlendMode] is provided then the default painting blend mode is used.
@@ -101,6 +106,10 @@ class RadialGaugeSegment {
       this.color,
       this.border,
       this.borderRadius,
+      this.topLeftCornerRadius = 0.0,
+      this.topRightCornerRadius = 0.0,
+      this.bottomRightCornerRadius = 0.0,
+      this.bottomLeftCornerRadius = 0.0,
       this.backgroundBlendMode})
       : assert(
             backgroundBlendMode == null || color != null || gradient != null,
@@ -122,6 +131,10 @@ class RadialGaugeSegment {
       Color? color,
       Border? border,
       BorderRadiusGeometry? borderRadius,
+      double topLeftCornerRadius = 0.0,
+      double topRightCornerRadius = 0.0,
+      double bottomRightCornerRadius = 0.0,
+      double bottomLeftCornerRadius = 0.0,
       BlendMode? backgroundBlendMode}) {
     return RadialGaugeSegment(
       minValue: minValue ?? this.minValue,
@@ -133,6 +146,10 @@ class RadialGaugeSegment {
       color: color ?? this.color,
       border: border ?? this.border,
       borderRadius: borderRadius ?? this.borderRadius,
+      topLeftCornerRadius: topLeftCornerRadius,
+      topRightCornerRadius: topRightCornerRadius,
+      bottomRightCornerRadius: bottomRightCornerRadius,
+      bottomLeftCornerRadius: bottomLeftCornerRadius,
       backgroundBlendMode: backgroundBlendMode ?? this.backgroundBlendMode,
     );
   }
