@@ -115,8 +115,17 @@ class RenderRadialGauge extends RenderBox {
 
     // Draw all segments of the axis.
     if (axis.segments != null) {
-      for (var segment in axis.segments!) {
-        _paintSegment(axis, segment, context);
+      for (int index = 0; index < axis.segments!.length; index++) {
+        bool circleStart = false, circleEnd = false;
+        if (index == 0) {
+          circleStart = axis.startCircle;
+        }
+        if (index == axis.segments!.length - 1) {
+          circleEnd = axis.endCircle;
+        }
+        final RadialGaugeSegment segment = axis.segments![index];
+        _paintSegment(axis, segment, context,
+            circleEnd: circleEnd, circleStart: circleStart);
       }
     }
 
@@ -128,8 +137,9 @@ class RenderRadialGauge extends RenderBox {
   /// Paints the given [segment], including its ticks.
   ///
   /// [axis] is the axis this segment belongs to.
-  void _paintSegment(RadialGaugeAxis axis, RadialGaugeSegment segment,
-      PaintingContext context) {
+  void _paintSegment(
+      RadialGaugeAxis axis, RadialGaugeSegment segment, PaintingContext context,
+      {bool circleStart = false, bool circleEnd = false}) {
     /// The width of the axis in pixels.
     var renderWidth;
 
@@ -168,7 +178,8 @@ class RenderRadialGauge extends RenderBox {
     final outerRadius = innerRadius + renderWidth;
 
     // Draw segment itself.
-    _paintSegmentFill(context, segment, innerRadius, outerRadius);
+    _paintSegmentFill(context, segment, innerRadius, outerRadius,
+        circleStart: circleStart, circleEnd: circleEnd);
 
     // Draw ticks
     _paintSegmentTicks(context, segment, innerRadius, outerRadius);
@@ -180,19 +191,21 @@ class RenderRadialGauge extends RenderBox {
   /// [innerRadius] is the inner radius of the segment fill.
   /// [outerRadius] is the outer radius of the segment fill.
   void _paintSegmentFill(PaintingContext context, RadialGaugeSegment segment,
-      double innerRadius, double outerRadius) {
+      double innerRadius, double outerRadius,
+      {bool circleStart = false, bool circleEnd = false}) {
     // TODO: For different widths, see https://stackoverflow.com/questions/58212594/how-to-draw-an-arc-with-different-start-and-end-thickness-in-flutter
     if (segment.color != null || segment.gradient != null) {
       final minAngle = segment.minAngle;
       final maxAngle = segment.maxAngle;
       double topLeftBorderRadius =
-          segment.topLeftCornerRadius; // between 0 and 100
+          circleEnd ? 0.0 : segment.topLeftCornerRadius; // between 0 and 100
       double topRightBorderRadius =
-          segment.topRightCornerRadius; // between 0 and 100
-      double bottomRightBorderRadius =
-          segment.bottomRightCornerRadius; // between 0 and 100
+          circleStart ? 0.0 : segment.topRightCornerRadius; // between 0 and 100
+      double bottomRightBorderRadius = circleStart
+          ? 0.0
+          : segment.bottomRightCornerRadius; // between 0 and 100
       double bottomLeftBorderRadius =
-          segment.bottomLeftCornerRadius; // between 0 and 100
+          circleEnd ? 0.0 : segment.bottomLeftCornerRadius; // between 0 and 100
       const double maxBorderRadiusValue = 100;
       topLeftBorderRadius = topLeftBorderRadius > maxBorderRadiusValue
           ? maxBorderRadiusValue
@@ -372,8 +385,13 @@ class RenderRadialGauge extends RenderBox {
         circleWidthPoints[1].dx,
         circleWidthPoints[1].dy,
       );
-      segmentOutlinePath.lineTo(
-          circleWidthPoints[2].dx, circleWidthPoints[2].dy);
+      if (circleStart) {
+        segmentOutlinePath.arcToPoint(circleWidthPoints[2],
+            radius: Radius.circular(5.0));
+      } else {
+        segmentOutlinePath.lineTo(
+            circleWidthPoints[2].dx, circleWidthPoints[2].dy);
+      }
 
       segmentOutlinePath.quadraticBezierTo(
         mainPoints[2].dx,
@@ -397,8 +415,16 @@ class RenderRadialGauge extends RenderBox {
         circleWidthPoints[3].dx,
         circleWidthPoints[3].dy,
       );
-      segmentOutlinePath.lineTo(
-          circleWidthPoints[0].dx, circleWidthPoints[0].dy);
+      if (circleEnd) {
+        segmentOutlinePath.arcToPoint(
+          circleWidthPoints[0],
+          radius: Radius.circular(5.0),
+        );
+      } else {
+        segmentOutlinePath.lineTo(
+            circleWidthPoints[0].dx, circleWidthPoints[0].dy);
+      }
+
       segmentOutlinePath.close();
 
       /// The paint used to fill the segment's outline.
