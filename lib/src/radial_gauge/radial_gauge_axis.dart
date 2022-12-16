@@ -12,6 +12,8 @@ class RadialGaugeAxis extends RadialGaugeSegment {
   /// If null, there is one singular segment for the entire axis.
   final List<RadialGaugeSegment>? segments;
 
+  final bool startCircle, endCircle;
+
   /// The pointers for this axis.
   final List<RadialGaugePointer>? pointers;
 
@@ -39,27 +41,29 @@ class RadialGaugeAxis extends RadialGaugeSegment {
   /// [color], which fills the box. Above that is the [gradient], which also fills
   /// the box. Finally there is the [image], the precise alignment of which is
   /// controlled by the [DecorationImage] class.
-  RadialGaugeAxis({
-    required double minValue,
-    required double maxValue,
-    double minAngle = -150.0,
-    double maxAngle = 150.0,
-    double radius = 0.8,
-    double? radiusAbsolute,
-    double width = 0.2,
-    double? widthAbsolute,
-    List<RadialTicks>? ticks,
-    this.pointers,
-    Color? color,
-    Gradient? gradient,
-    BlendMode? backgroundBlendMode,
-    Border? border,
-    BorderRadiusGeometry? borderRadius,
-    this.segments,
-    this.offsetAbsolute,
-    this.offset,
-    this.rotation = 0,
-  })  : assert(minValue != null),
+  RadialGaugeAxis(
+      {required double minValue,
+      required double maxValue,
+      double minAngle = -150.0,
+      double maxAngle = 150.0,
+      double radius = 0.8,
+      double? radiusAbsolute,
+      double width = 0.2,
+      double? widthAbsolute,
+      List<RadialTicks>? ticks,
+      this.pointers,
+      Color? color,
+      Gradient? gradient,
+      BlendMode? backgroundBlendMode,
+      Border? border,
+      BorderRadiusGeometry? borderRadius,
+      this.segments,
+      this.offsetAbsolute,
+      this.offset,
+      this.rotation = 0,
+      this.startCircle = false,
+      this.endCircle = false})
+      : assert(minValue != null),
         assert(maxValue != null),
         assert(minAngle != null),
         assert(maxAngle != null),
