@@ -4,9 +4,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:private_lecture/ui/screens/test/gauge/gauges.dart';
-import 'package:private_lecture/ui/screens/test/gauge/src/radial_gauge/radial_ticks.dart';
-
+import 'package:gauges/gauges.dart';
+import 'package:gauges/src/radial_gauge/radial_ticks.dart';
 import 'radial_gauge_axis.dart';
 import 'radial_gauge_segment.dart';
 
