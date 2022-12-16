@@ -4,8 +4,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gauges/gauges.dart';
-import 'package:gauges/src/radial_gauge/radial_ticks.dart';
+import 'package:private_lecture/ui/screens/test/gauge/gauges.dart';
+import 'package:private_lecture/ui/screens/test/gauge/src/radial_gauge/radial_ticks.dart';
+
 import 'radial_gauge_axis.dart';
 import 'radial_gauge_segment.dart';
 
@@ -185,9 +186,76 @@ class RenderRadialGauge extends RenderBox {
     if (segment.color != null || segment.gradient != null) {
       final minAngle = segment.minAngle;
       final maxAngle = segment.maxAngle;
+      double topLeftBorderRadius =
+          segment.topLeftCornerRadius; // between 0 and 100
+      double topRightBorderRadius =
+          segment.topRightCornerRadius; // between 0 and 100
+      double bottomRightBorderRadius =
+          segment.bottomRightCornerRadius; // between 0 and 100
+      double bottomLeftBorderRadius =
+          segment.bottomLeftCornerRadius; // between 0 and 100
+      const double maxBorderRadiusValue = 100;
+      topLeftBorderRadius = topLeftBorderRadius > maxBorderRadiusValue
+          ? maxBorderRadiusValue
+          : topLeftBorderRadius;
+      topRightBorderRadius = topRightBorderRadius > maxBorderRadiusValue
+          ? maxBorderRadiusValue
+          : topRightBorderRadius;
+      bottomRightBorderRadius = bottomRightBorderRadius > maxBorderRadiusValue
+          ? maxBorderRadiusValue
+          : bottomRightBorderRadius;
+      bottomLeftBorderRadius = bottomLeftBorderRadius > maxBorderRadiusValue
+          ? maxBorderRadiusValue
+          : bottomLeftBorderRadius;
+
+      final double topLeftBorderRadiusPercentage =
+          (topLeftBorderRadius / 2) / 100;
+      final double topRightBorderRadiusPercentage =
+          (topRightBorderRadius / 2) / 100;
+      final double bottomRightBorderRadiusPercentage =
+          (bottomRightBorderRadius / 2) / 100;
+      final double bottomLeftBorderRadiusPercentage =
+          (bottomLeftBorderRadius / 2) / 100;
+
+      final double circleTopLeftCornerSpaceValue =
+          ((maxAngle - minAngle) * topLeftBorderRadiusPercentage);
+      final double circleTopRightCornerSpaceValue =
+          ((maxAngle - minAngle) * topRightBorderRadiusPercentage);
+      final double circleBottomRightCornerSpaceValue =
+          ((maxAngle - minAngle) * bottomRightBorderRadiusPercentage);
+      final double circleBottomLeftCornerSpaceValue =
+          ((maxAngle - minAngle) * bottomLeftBorderRadiusPercentage);
+
+      final double circleMaxCornerSpaceValue =
+          ((outerRadius - innerRadius) / 4);
+      final double topLeftCornerSpace =
+          circleTopLeftCornerSpaceValue < circleMaxCornerSpaceValue
+              ? circleTopLeftCornerSpaceValue
+              : circleMaxCornerSpaceValue;
+      final double topRightCornerSpace =
+          circleTopRightCornerSpaceValue < circleMaxCornerSpaceValue
+              ? circleTopRightCornerSpaceValue
+              : circleMaxCornerSpaceValue;
+      final double bottomRightCornerSpace =
+          circleBottomRightCornerSpaceValue < circleMaxCornerSpaceValue
+              ? circleBottomRightCornerSpaceValue
+              : circleMaxCornerSpaceValue;
+      final double bottomLeftCornerSpace =
+          circleBottomLeftCornerSpaceValue < circleMaxCornerSpaceValue
+              ? circleBottomLeftCornerSpaceValue
+              : circleMaxCornerSpaceValue;
+
+      final double topLeftCircleWidthSpaceValue =
+          (outerRadius - innerRadius) * topLeftBorderRadiusPercentage;
+      final double topRightCircleWidthSpaceValue =
+          (outerRadius - innerRadius) * topRightBorderRadiusPercentage;
+      final double bottomRightCircleWidthSpaceValue =
+          (outerRadius - innerRadius) * bottomRightBorderRadiusPercentage;
+      final double bottomLeftCircleWidthSpaceValue =
+          (outerRadius - innerRadius) * bottomLeftBorderRadiusPercentage;
 
       /// The points of the outline of the segment
-      final points = [
+      final mainPoints = [
         Offset(innerRadius * cos(maxAngle * degrees2Radians) + size.width / 2,
             innerRadius * sin(maxAngle * degrees2Radians) + size.height / 2),
         Offset(innerRadius * cos(minAngle * degrees2Radians) + size.width / 2,
@@ -216,9 +284,77 @@ class RenderRadialGauge extends RenderBox {
                       degrees2Radians) +
               size.height / 2);
 
+      final circlePoints = [
+        Offset(
+            innerRadius *
+                    cos((maxAngle - topLeftCornerSpace) * degrees2Radians) +
+                size.width / 2,
+            innerRadius *
+                    sin((maxAngle - topLeftCornerSpace) * degrees2Radians) +
+                size.height / 2),
+        Offset(
+            innerRadius *
+                    cos((minAngle + topRightCornerSpace) * degrees2Radians) +
+                size.width / 2,
+            innerRadius *
+                    sin((minAngle + topRightCornerSpace) * degrees2Radians) +
+                size.height / 2),
+        Offset(
+            outerRadius *
+                    cos((minAngle + bottomRightCornerSpace) * degrees2Radians) +
+                size.width / 2,
+            outerRadius *
+                    sin((minAngle + bottomRightCornerSpace) * degrees2Radians) +
+                size.height / 2),
+        Offset(
+            outerRadius *
+                    cos((maxAngle - bottomLeftCornerSpace) * degrees2Radians) +
+                size.width / 2,
+            outerRadius *
+                    sin((maxAngle - bottomLeftCornerSpace) * degrees2Radians) +
+                size.height / 2),
+      ];
+      final circleWidthPoints = [
+        Offset(
+            (innerRadius + topLeftCircleWidthSpaceValue) *
+                    cos(maxAngle * degrees2Radians) +
+                size.width / 2,
+            (innerRadius + topLeftCircleWidthSpaceValue) *
+                    sin(maxAngle * degrees2Radians) +
+                size.height / 2),
+        Offset(
+            (innerRadius + topRightCircleWidthSpaceValue) *
+                    cos(minAngle * degrees2Radians) +
+                size.width / 2,
+            (innerRadius + topRightCircleWidthSpaceValue) *
+                    sin(minAngle * degrees2Radians) +
+                size.height / 2),
+        Offset(
+            (outerRadius - bottomRightCircleWidthSpaceValue) *
+                    cos(minAngle * degrees2Radians) +
+                size.width / 2,
+            (outerRadius - bottomRightCircleWidthSpaceValue) *
+                    sin(minAngle * degrees2Radians) +
+                size.height / 2),
+        Offset(
+            (outerRadius - bottomLeftCircleWidthSpaceValue) *
+                    cos(maxAngle * degrees2Radians) +
+                size.width / 2,
+            (outerRadius - bottomLeftCircleWidthSpaceValue) *
+                    sin(maxAngle * degrees2Radians) +
+                size.height / 2),
+      ];
+
       // Create segment outline path.
       final segmentOutlinePath = Path();
-      segmentOutlinePath.moveTo(points[0].dx, points[0].dy);
+      segmentOutlinePath.moveTo(
+          circleWidthPoints[0].dx, circleWidthPoints[0].dy);
+      segmentOutlinePath.quadraticBezierTo(
+        mainPoints[0].dx,
+        mainPoints[0].dy,
+        circlePoints[0].dx,
+        circlePoints[0].dy,
+      );
       if (segment.maxAngle - segment.minAngle > 180.0) {
         segmentOutlinePath.arcToPoint(
           innerCirclePoint,
@@ -227,11 +363,25 @@ class RenderRadialGauge extends RenderBox {
         );
       }
       segmentOutlinePath.arcToPoint(
-        points[1],
+        circlePoints[1],
         radius: Radius.circular(innerRadius),
         clockwise: false,
       );
-      segmentOutlinePath.lineTo(points[2].dx, points[2].dy);
+      segmentOutlinePath.quadraticBezierTo(
+        mainPoints[1].dx,
+        mainPoints[1].dy,
+        circleWidthPoints[1].dx,
+        circleWidthPoints[1].dy,
+      );
+      segmentOutlinePath.lineTo(
+          circleWidthPoints[2].dx, circleWidthPoints[2].dy);
+
+      segmentOutlinePath.quadraticBezierTo(
+        mainPoints[2].dx,
+        mainPoints[2].dy,
+        circlePoints[2].dx,
+        circlePoints[2].dy,
+      );
       if (segment.maxAngle - segment.minAngle > 180.0) {
         segmentOutlinePath.arcToPoint(
           outerCirclePoint,
@@ -239,10 +389,17 @@ class RenderRadialGauge extends RenderBox {
         );
       }
       segmentOutlinePath.arcToPoint(
-        points[3],
+        circlePoints[3],
         radius: Radius.circular(outerRadius),
       );
-      segmentOutlinePath.lineTo(points[0].dx, points[0].dy);
+      segmentOutlinePath.quadraticBezierTo(
+        mainPoints[3].dx,
+        mainPoints[3].dy,
+        circleWidthPoints[3].dx,
+        circleWidthPoints[3].dy,
+      );
+      segmentOutlinePath.lineTo(
+          circleWidthPoints[0].dx, circleWidthPoints[0].dy);
       segmentOutlinePath.close();
 
       /// The paint used to fill the segment's outline.
